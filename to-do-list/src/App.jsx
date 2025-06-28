@@ -4,6 +4,7 @@ import ToDoItem from "./components/ToDoItem";
 function App() {
   const [newItem, setnewItem] = useState("");
   const [items, setItems] = useState([]);
+  const [priority, setPriority] = useState("low");
 
   // items.sort((a, b) => {
   //   if (a.completed && !b.completed) return 1;
@@ -18,7 +19,12 @@ function App() {
   }, [items]);
 
   function handleClick() {
-    const item = { id: Date.now(), content: newItem, completed: false };  // date.now() to avoid clashing id's
+    const item = {
+      id: Date.now(),   // date.now() to avoid clashing id's
+      content: newItem,
+      completed: false,
+      priority: priority
+    };
     setItems([...items, item]);
     setnewItem(''); // clear textbox after adding
   }
@@ -42,7 +48,17 @@ function App() {
     <div>
       <h1> To Do: </h1>
       <div className="input-container">
-        <input type="text" onChange={(i) => setnewItem(i.target.value)} value={newItem}></input>
+        <input
+          type="text"
+          onChange={(i) => setnewItem(i.target.value)}
+          value={newItem}
+          placeholder="Enter task"></input>
+        <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+
         <button onClick={handleClick}>Add</button>
       </div>
       {sorted.map(item => (
@@ -51,6 +67,7 @@ function App() {
           id={item.id}
           content={item.content}
           completed={item.completed}
+          priority={item.priority}
           whenDel={deleteHandle}
           onToggle={toggleItem} />
       ))}
