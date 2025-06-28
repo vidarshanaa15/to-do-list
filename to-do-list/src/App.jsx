@@ -14,8 +14,12 @@ function App() {
   // the func above does the same thing that is happening below, but is more verbose
   // TIL that js can treat booleans as numbers, so we are just subtracting 0s and 1s
 
-  const sorted = useMemo(() => { // useMemo is for optimizing expensive calculations like .sort
+  const sorted = useMemo(() => { // useMemo is used to cache calculations (triggers only when items is modified)
     return [...items].sort((a, b) => a.completed - b.completed);
+  }, [items]);
+
+  const progress = useMemo(() => {
+    return items.length === 0 ? 0 : (items.filter(i => i.completed)).length / items.length * 100;
   }, [items]);
 
   function handleClick() {
@@ -42,10 +46,14 @@ function App() {
   // first had this inside handleClick(), turns out react hooks cannot be used inside functions
   useEffect(() => {
     console.log(items);
+    console.log(progress);
   }, [items]);
 
   return (
     <div>
+      <div className="progress-bar">
+        <div className="progress-fill" style={{ visibility: progress > 0 ? "visible" : "hidden", width: `${progress}%` }}></div>
+      </div>
       <h1> To Do: </h1>
       <div className="input-container">
         <input
@@ -58,7 +66,6 @@ function App() {
           <option value="medium">Medium</option>
           <option value="high">High</option>
         </select>
-
         <button onClick={handleClick}>Add</button>
       </div>
       {sorted.map(item => (
