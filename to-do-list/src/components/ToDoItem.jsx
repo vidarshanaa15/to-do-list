@@ -8,10 +8,7 @@ function ToDoItem(props) {
                 id={props.id}
                 checked={props.completed}
                 onChange={() => props.onToggle(props.id)} />
-            <p style={{
-                textDecoration: props.completed ? "line-through" : "none",
-                color: props.completed ? "gray" : "black"
-            }}>{props.content}</p>
+            <p>{props.content}</p>
             <span className={`priority-tag ${props.priority}`}>{props.priority}</span>
             <button onClick={() => props.whenDel(props.id)}>x</button>
             {/* <button onClick={props.whenDel(props.id)}>x</button> */}
@@ -22,12 +19,3 @@ function ToDoItem(props) {
 }
 
 export default ToDoItem;
-
-// make the striked out text dull coloured ✅
-// add new item feature ✅
-// add delete item feature ✅
-// make the completed item move to bottom of list✅
-// css ✅
-// topic tags - high, medium, low prio ✅
-// progress /completion bar
-// local storage

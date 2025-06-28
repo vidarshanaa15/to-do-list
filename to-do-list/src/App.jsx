@@ -6,6 +6,14 @@ function App() {
   const [items, setItems] = useState([]);
   const [priority, setPriority] = useState("low");
 
+  // load from localStorage on first mount
+  useEffect(() => {
+    const saved = localStorage.getItem("items");
+    if (saved) {
+      setItems(JSON.parse(saved));
+    }
+  }, []);
+
   // items.sort((a, b) => {
   //   if (a.completed && !b.completed) return 1;
   //   if (!a.completed && b.completed) return -1;
@@ -45,41 +53,62 @@ function App() {
 
   // first had this inside handleClick(), turns out react hooks cannot be used inside functions
   useEffect(() => {
-    console.log(items);
-    console.log(progress);
+    localStorage.setItem("items", JSON.stringify(items));
   }, [items]);
 
   return (
-    <div>
-      <div className="progress-bar">
-        <div className="progress-fill" style={{ visibility: progress > 0 ? "visible" : "hidden", width: `${progress}%` }}></div>
+    <div className="layout-wrapper">
+      <div className="todo-container">
+        <h1>To Do</h1>
+        <div className="input-container">
+          <input
+            type="text"
+            onChange={(i) => setnewItem(i.target.value)}
+            value={newItem}
+            placeholder="Enter task"
+          />
+          <select
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+          >
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+          <button onClick={handleClick}>Add</button>
+        </div>
+        {sorted.map((item) => (
+          <ToDoItem
+            key={item.id}
+            id={item.id}
+            content={item.content}
+            completed={item.completed}
+            priority={item.priority}
+            whenDel={deleteHandle}
+            onToggle={toggleItem}
+          />
+        ))}
       </div>
-      <h1> To Do: </h1>
-      <div className="input-container">
-        <input
-          type="text"
-          onChange={(i) => setnewItem(i.target.value)}
-          value={newItem}
-          placeholder="Enter task"></input>
-        <select value={priority} onChange={(e) => setPriority(e.target.value)}>
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
-        <button onClick={handleClick}>Add</button>
+
+      <div className="progress-container">
+        <div className="progress-bar-wrapper">
+          <h3>Progress</h3>
+          <div className="progress-bar">
+            <div
+              className="progress-fill"
+              style={{
+                visibility: progress > 0 ? "visible" : "hidden",
+                width: `${progress}%`
+              }}
+            ></div>
+          </div>
+          <p style={{ textAlign: "center", marginTop: "0.5rem", fontWeight: 500 }}>
+            {Math.round(progress)}% Complete
+          </p>
+        </div>
       </div>
-      {sorted.map(item => (
-        <ToDoItem
-          key={item.id}
-          id={item.id}
-          content={item.content}
-          completed={item.completed}
-          priority={item.priority}
-          whenDel={deleteHandle}
-          onToggle={toggleItem} />
-      ))}
     </div>
-  )
+  );
 }
 
 export default App;
